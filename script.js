@@ -8,10 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskList = document.getElementById('task-list');
 
     // タスクを追加/表示するためのメイン関数
-    const addTask = (taskData = {}) => {
-        const text = taskData.text || taskInput.value.trim();
-        if (text === '') return;
-
+    const createTaskElement = (taskData) => {
         const li = document.createElement('li');
         if (taskData.completed) {
             li.classList.add('completed');
@@ -19,23 +16,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // タスク名
         const span = document.createElement('span');
-        span.textContent = text;
+        span.textContent = taskData.text;
         span.classList.add('task-text');
         
-        // --- 編集機能ここから ---
+        // --- 編集機能 ---
         span.addEventListener('dblclick', () => {
-            li.classList.add('editing'); // 編集中のクラスを追加
+            // 他の編集中タスクがあれば、先に保存する
+            const currentlyEditing = document.querySelector('li.editing');
+            if (currentlyEditing) {
+                currentlyEditing.querySelector('.edit-input').blur();
+            }
+
+            li.classList.add('editing');
 
             const editInput = document.createElement('input');
             editInput.type = 'text';
             editInput.value = span.textContent;
             editInput.classList.add('edit-input');
             
-            // spanの直前に編集用のinputを挿入
             li.insertBefore(editInput, span);
             editInput.focus();
 
             const saveEdit = () => {
+                if (!li.classList.contains('editing')) return; // 既に保存済みの場合は何もしない
                 span.textContent = editInput.value;
                 li.removeChild(editInput);
                 li.classList.remove('editing');
@@ -47,13 +50,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     saveEdit();
                 }
             });
-
             editInput.addEventListener('blur', saveEdit);
         });
-        // --- 編集機能ここまで ---
 
+        // 完了・未完了の切り替え
         span.addEventListener('click', (e) => {
-            // ダブルクリックとシングルクリックを区別
             if (e.detail === 1 && !li.classList.contains('editing')) {
                 li.classList.toggle('completed');
                 saveTasks();
@@ -61,26 +62,23 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // 追加日
-        const today = new Date();
-        const addDateString = taskData.addDate || `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`;
         const dateSpan = document.createElement('span');
-        dateSpan.textContent = addDateString;
+        dateSpan.textContent = taskData.addDate;
         dateSpan.classList.add('task-date');
 
         li.appendChild(span);
         li.appendChild(dateSpan);
 
         // 期限日
-        const dueDateString = taskData.dueDate || dueDateInput.value;
-        if (dueDateString) {
+        if (taskData.dueDate) {
             const dueDateSpan = document.createElement('span');
-            dueDateSpan.textContent = `期限: ${dueDateString.replace(/-/g, '/')}`;
+            dueDateSpan.textContent = `期限: ${taskData.dueDate.replace(/-/g, '/')}`;
             dueDateSpan.classList.add('due-date');
             li.appendChild(dueDateSpan);
 
-            const today_for_check = new Date();
-            today_for_check.setHours(0, 0, 0, 0);
-            if (new Date(dueDateString) < today_for_check && !taskData.completed) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            if (new Date(taskData.dueDate) < today && !taskData.completed) {
                 li.classList.add('overdue');
             }
         }
@@ -95,20 +93,34 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         li.appendChild(deleteBtn);
 
+        return li;
+    };
+
+    const addNewTask = () => {
+        const text = taskInput.value.trim();
+        if (text === '') return;
+
+        const today = new Date();
+        const taskData = {
+            text: text,
+            addDate: `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`,
+            dueDate: dueDateInput.value,
+            completed: false
+        };
+
+        const li = createTaskElement(taskData);
         taskList.appendChild(li);
 
-        if (!taskData.text) {
-            taskInput.value = '';
-            dueDateInput.value = '';
-            saveTasks();
-        }
+        taskInput.value = '';
+        dueDateInput.value = '';
+        saveTasks();
     };
 
     // ローカルストレージにタスクを保存する関数
     const saveTasks = () => {
         const tasks = [];
         document.querySelectorAll('#task-list li').forEach(li => {
-            if (li.classList.contains('editing')) return; // 編集中は保存しない
+            if (li.classList.contains('editing')) return;
             const dueDateEl = li.querySelector('.due-date');
             tasks.push({
                 text: li.querySelector('.task-text').textContent,
@@ -123,13 +135,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // 保存されたタスクを読み込んで表示する関数
     const loadTasks = () => {
         const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        tasks.forEach(task => addTask(task));
+        tasks.forEach(task => {
+            const li = createTaskElement(task);
+            taskList.appendChild(li);
+        });
     };
 
     // イベントリスナー
-    addBtn.addEventListener('click', () => addTask());
+    addBtn.addEventListener('click', addNewTask);
     taskInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') addTask();
+        if (e.key === 'Enter') addNewTask();
     });
 
     // ページ読み込み
