@@ -228,3 +228,25 @@ body.dark-mode .due-date {
 body.dark-mode #task-list li.overdue .due-date {
     color: #f1948a;
 }
+
+/* ...今までのCSSは省略... */
+
+/* ===========================
+   タスク編集用のスタイル
+   =========================== */
+.edit-input {
+    flex-grow: 1;
+    font-size: 1rem;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #3498db;
+    border-radius: 3px;
+    font-family: inherit;
+}
+
+/* 編集中は元のテキストを隠す */
+li.editing .task-text,
+li.editing .task-date,
+li.editing .due-date {
+    display: none;
+}
