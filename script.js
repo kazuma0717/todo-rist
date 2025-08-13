@@ -7,24 +7,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskList = document.getElementById('task-list');
 
     // タスクを追加する関数
-    const addTask = () => {
-        const taskText = taskInput.value.trim(); // 入力値を取得し、前後の空白を削除
+    const addTask = (taskText, taskDate, isCompleted) => {
+        const text = taskText || taskInput.value.trim(); // 入力値を取得し、前後の空白を削除
 
-        if (taskText === '') {
+        if (text === '') {
             // 入力が空の場合は何もしない
             return;
         }
 
         // li要素を作成
         const li = document.createElement('li');
+        if (isCompleted) {
+            li.classList.add('completed');
+        }
 
         // span要素（タスク名）を作成
         const span = document.createElement('span');
-        span.textContent = taskText;
+        span.textContent = text;
+        span.classList.add('task-text');
         span.addEventListener('click', () => {
             li.classList.toggle('completed'); // 'completed'クラスを付け外し
             saveTasks(); // 状態を保存
         });
+
+        // 日付を取得または使用
+        const today = new Date();
+        const dateString = taskDate || `${today.getFullYear()}/${today.getMonth() + 1}/${today.getDate()}`;
+        
+        // 日付を表示するspan要素を作成
+        const dateSpan = document.createElement('span');
+        dateSpan.textContent = dateString;
+        dateSpan.classList.add('task-date');
 
         // 削除ボタンを作成
         const deleteBtn = document.createElement('button');
@@ -35,18 +48,19 @@ document.addEventListener('DOMContentLoaded', () => {
             saveTasks(); // 状態を保存
         });
 
-        // li要素にspanと削除ボタンを追加
+        // li要素に各要素を追加
         li.appendChild(span);
+        li.appendChild(dateSpan);
         li.appendChild(deleteBtn);
 
         // ul（taskList）にliを追加
         taskList.appendChild(li);
 
-        // 入力欄を空にする
-        taskInput.value = '';
-
-        // 作成したタスクを保存
-        saveTasks();
+        // 新規追加の場合のみ入力欄を空にし、保存する
+        if (!taskText) {
+            taskInput.value = '';
+            saveTasks();
+        }
     };
 
     // ブラウザのローカルストレージにタスクを保存する関数
@@ -54,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const tasks = [];
         document.querySelectorAll('#task-list li').forEach(li => {
             tasks.push({
-                text: li.querySelector('span').textContent,
+                text: li.querySelector('.task-text').textContent,
+                date: li.querySelector('.task-date').textContent, // 日付も保存
                 completed: li.classList.contains('completed')
             });
         });
@@ -67,34 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (tasks) {
             tasks.forEach(task => {
-                // 保存されているタスクを元に、addTaskとほぼ同じ処理で要素を復元
-                const li = document.createElement('li');
-                if (task.completed) {
-                    li.classList.add('completed');
-                }
-                const span = document.createElement('span');
-                span.textContent = task.text;
-                span.addEventListener('click', () => {
-                    li.classList.toggle('completed');
-                    saveTasks();
-                });
-                const deleteBtn = document.createElement('button');
-                deleteBtn.textContent = '削除';
-                deleteBtn.classList.add('delete-btn');
-                deleteBtn.addEventListener('click', () => {
-                    li.remove();
-                    saveTasks();
-                });
-
-                li.appendChild(span);
-                li.appendChild(deleteBtn);
-                taskList.appendChild(li);
+                // 保存されたタスクを元に要素を復元
+                addTask(task.text, task.date, task.completed);
             });
         }
     };
 
     // 追加ボタンのクリックイベント
-    addBtn.addEventListener('click', addTask);
+    addBtn.addEventListener('click', () => addTask());
 
     // 入力欄でEnterキーが押された時のイベント
     taskInput.addEventListener('keypress', (e) => {
