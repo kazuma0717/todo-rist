@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* 基本スタイル */
 * {
     box-sizing: border-box;
@@ -185,4 +186,135 @@ body.dark-mode #task-list li.completed .task-text {
 body.dark-mode #theme-toggle-btn {
     border-color: #555;
     color: #e0e0e0;
+=======
+/* 基本スタイル */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: #f4f7f9;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 600px;
+    margin: 2rem auto;
+    background-color: #ffffff;
+    padding: 1.5rem 2rem;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #4a4a4a;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.h1-icon {
+    width: 28px;
+    height: 28px;
+    margin-right: 0.5rem;
+}
+
+
+/* 入力エリア */
+.input-area {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+#task-input {
+    flex-grow: 1; /* 残りのスペースをすべて使う */
+    padding: 0.8rem;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+#task-input:focus {
+    outline: none;
+    border-color: #3498db;
+}
+
+#add-btn {
+    padding: 0.8rem 1.2rem;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#add-btn:hover {
+    background-color: #2980b9;
+}
+
+
+/* タスクリスト */
+#task-list {
+    list-style-type: none;
+}
+
+#task-list li {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 0.5rem;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
+}
+
+#task-list li:last-child {
+    border-bottom: none;
+}
+
+.task-text {
+    flex-grow: 1;
+    cursor: pointer;
+    margin-right: 1rem; /* 日付との間に余白を追加 */
+}
+
+.task-date {
+    font-size: 0.8rem;
+    color: #888;
+    white-space: nowrap; /* 日付が改行されないようにする */
+}
+
+
+/* 完了したタスクのスタイル */
+#task-list li.completed .task-text {
+    text-decoration: line-through;
+    color: #aaa;
+}
+
+.delete-btn {
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    visibility: hidden; /* 最初は非表示 */
+    opacity: 0;
+    transition: opacity 0.2s, visibility 0.2s;
+}
+
+#task-list li:hover .delete-btn {
+    visibility: visible; /* ホバー時に表示 */
+    opacity: 1;
+>>>>>>> a6fd036519d6f27219b90d4fef6afb41a4f1ab93
 }
