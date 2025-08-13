@@ -186,3 +186,45 @@ body.dark-mode #theme-toggle-btn {
     border-color: #555;
     color: #e0e0e0;
 }
+
+/* ...今までのCSSは省略... */
+
+/* ===========================
+   期限日用のスタイル
+   =========================== */
+#due-date-input {
+    padding: 0.8rem;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-family: inherit; /* フォントを全体と合わせる */
+    color: #555;
+}
+
+.due-date {
+    font-size: 0.8rem;
+    color: #3498db;
+    margin-left: auto; /* 右側に寄せる */
+    padding-left: 1rem;
+    font-weight: bold;
+}
+
+/* 期限切れタスクのスタイル */
+#task-list li.overdue .due-date {
+    color: #e74c3c; /* 赤色にする */
+}
+
+
+/* ダークモード用の調整 */
+body.dark-mode #due-date-input {
+    background-color: #3a3a3a;
+    border-color: #555;
+    color: #e0e0e0;
+}
+
+body.dark-mode .due-date {
+    color: #5dade2;
+}
+
+body.dark-mode #task-list li.overdue .due-date {
+    color: #f1948a;
+}
