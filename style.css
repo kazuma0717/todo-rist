@@ -187,7 +187,7 @@ body.dark-mode #theme-toggle-btn {
     color: #e0e0e0;
 }
 
-/* ...今までのCSSは省略... */
+
 
 /* ===========================
    期限日用のスタイル
@@ -229,7 +229,6 @@ body.dark-mode #task-list li.overdue .due-date {
     color: #f1948a;
 }
 
-/* ...今までのCSSは省略... */
 
 /* ===========================
    タスク編集用のスタイル
